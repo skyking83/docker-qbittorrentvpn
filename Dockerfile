@@ -173,6 +173,7 @@ RUN apt update \
     dos2unix \
     inetutils-ping \
     ipcalc \
+    iproute2 \
     iptables \
     kmod \
     libqt6network6 \
