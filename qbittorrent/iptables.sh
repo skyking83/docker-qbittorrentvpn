@@ -63,6 +63,15 @@ for lan_network_item in "${lan_network_list[@]}"; do
 	ip route add "${lan_network_item}" via "${DEFAULT_GATEWAY}" dev "${docker_interface}"
 done
 
+# add iptables rules to allow traffic to/from LAN networks
+for lan_network_item in "${lan_network_list[@]}"; do
+	lan_network_item=$(echo "${lan_network_item}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
+
+	echo "[INFO] Adding iptables rules for LAN network ${lan_network_item}" | ts '%Y-%m-%d %H:%M:%.S'
+	iptables -A INPUT -s "${lan_network_item}" -d "${docker_network_cidr}" -j ACCEPT
+	iptables -A OUTPUT -s "${docker_network_cidr}" -d "${lan_network_item}" -j ACCEPT
+done
+
 echo "[INFO] ip route defined as follows..." | ts '%Y-%m-%d %H:%M:%.S'
 echo "--------------------"
 ip route
